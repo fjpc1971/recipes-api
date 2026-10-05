@@ -1,0 +1,56 @@
+{
+    "id": 636360,
+    "title": "Brussels Sprout Carbonara with Fettuccini",
+    "image": "https://img.spoonacular.com/recipes/636360-556x370.jpg",
+    "imageType": "jpg",
+    "servings": 4,
+    "readyInMinutes": 45,
+    "preparationMinutes": null,
+    "cookingMinutes": null,
+    "sourceUrl": "https://www.foodista.com/recipe/brussels-sprout-carbonara",
+    "extendedIngredients": [
+        {
+            "id": 11124,
+            "aisle": "Pasta and Rice",
+            "name": ".5 lb. of fettuccini pasta",
+            "nameClean": "fettuccine",
+            "original": "250gr / 0.5 lb. (dry weight) of good quality fettuccini pasta",
+            "amount": 250.0,
+            "unit": "gr"
+        },
+        {
+            "id": 11215,
+            "aisle": "Produce",
+            "name": "garlic",
+            "nameClean": null,
+            "original": "2 x large cloves of garlic chopped finely",
+            "amount": 2.0,
+            "unit": "large"
+        },
+        {
+            "id": 1123,
+            "aisle": "Milk, Eggs, Other Dairy",
+            "name": "eggs",
+            "original": "2 x eggs, beaten",
+            "amount": 2.5,
+            "unit": ""
+        }
+    ],
+    "summary": "A <b>carbonara</b> with brussels sprouts.",
+    "instructions": "<ol><li>Cook the pasta.</li><li>Fry the bacon.</li></ol>",
+    "analyzedInstructions": [
+        {
+            "name": "",
+            "steps": [
+                { "number": 1, "step": "Bring a large pot of salted water to the boil and cook the pasta." },
+                { "number": 2, "step": "Fry the bacon until crispy." }
+            ]
+        },
+        {
+            "name": "To serve",
+            "steps": [
+                { "number": 1, "step": "Add the egg and parmesan and stir quickly." }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+name: recipes-api
+
+services:
+  api:
+    build:
+      context: .
+      target: app
+    container_name: recipes-api
+    ports:
+      - "8080:80"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./public:/var/www/html/public
+      - ./src:/var/www/html/src
+      - ./tests:/var/www/html/tests
+      - recipes-cache:/var/cache/recipes
+
+volumes:
+  recipes-cache:

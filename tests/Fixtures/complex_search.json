@@ -1,0 +1,19 @@
+{
+    "results": [
+        {
+            "id": 636360,
+            "title": "Brussels Sprout Carbonara with Fettuccini",
+            "image": "https://img.spoonacular.com/recipes/636360-312x231.jpg",
+            "imageType": "jpg"
+        },
+        {
+            "id": 715538,
+            "title": "Pasta Carbonara",
+            "image": "https://img.spoonacular.com/recipes/715538-312x231.jpg",
+            "imageType": "jpg"
+        }
+    ],
+    "offset": 0,
+    "number": 2,
+    "totalResults": 2
+}

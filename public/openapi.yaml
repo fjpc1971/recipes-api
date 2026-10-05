@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: API de Recetas
+  version: 1.0.0
+  description: |
+    Busca recetas por nombre usando la API de Spoonacular y devuelve el primer resultado.
+
+    Las respuestas se cachean (24 h por defecto). La cabecera `X-Cache` indica si la
+    respuesta viene de caché (`HIT`) o de Spoonacular (`MISS`).
+servers:
+  - url: /
+    description: Servidor actual
+
+security: []
+
+tags:
+  - name: Recetas
+    description: Búsqueda de recetas
+
+paths:
+  /api/recipes/search:
+    get:
+      tags: [Recetas]
+      summary: Buscar una receta por nombre
+      description: Si la búsqueda devuelve varios resultados, se devuelve el primero.
+      operationId: searchRecipe
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Nombre (o parte del nombre) de la receta, en inglés.
+          schema:
+            type: string
+            maxLength: 100
+          example: pasta carbonara
+      responses:
+        '200':
+          description: Receta encontrada
+          headers:
+            X-Cache:
+              description: '`HIT` si la respuesta viene de caché, `MISS` si se ha consultado a Spoonacular.'
+              schema:
+                type: string
+                enum: [HIT, MISS]
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Recipe'
+        '400':
+          description: Falta el parámetro `name` o supera los 100 caracteres
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: { code: 400, message: 'El parámetro "name" es obligatorio' }
+        '404':
+          description: No se ha encontrado ninguna receta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: { code: 404, message: 'No se ha encontrado ninguna receta para "xyz"' }
+        '502':
+          description: Error en Spoonacular (por ejemplo, API key no válida)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Cuota diaria de Spoonacular agotada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: No se pudo conectar con Spoonacular
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Recipe:
+      type: object
+      required: [id, name, readyInMinutes, servings, ingredients, instructions, image]
+      properties:
+        id:
+          type: integer
+          description: Identificador de la receta en Spoonacular
+          example: 636360
+        name:
+          type: string
+          example: Brussels Sprout Carbonara with Fettuccini
+        readyInMinutes:
+          type: integer
+          nullable: true
+          description: Tiempo estimado de preparación, en minutos
+          example: 45
+        servings:
+          type: integer
+          nullable: true
+          description: Número de porciones
+          example: 4
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+        instructions:
+          type: array
+          nullable: true
+          description: Pasos de preparación en orden; `null` si la receta no tiene instrucciones
+          items:
+            type: string
+          example:
+            - Bring a large pot of salted water to the boil.
+            - Cook the pasta until al dente.
+        image:
+          type: string
+          format: uri
+          nullable: true
+          example: https://img.spoonacular.com/recipes/636360-556x370.jpg
+
+    Ingredient:
+      type: object
+      required: [name, amount, unit, original]
+      properties:
+        name:
+          type: string
+          example: garlic
+        amount:
+          type: number
+          nullable: true
+          example: 2
+        unit:
+          type: string
+          example: cloves
+        original:
+          type: string
+          description: Texto original del ingrediente en la receta
+          example: 2 x large cloves of garlic chopped finely
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: integer
+              example: 400
+            message:
+              type: string
