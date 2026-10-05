@@ -5,9 +5,10 @@ declare(strict_types=1);
 /**
  * Runner de tests mínimo, sin dependencias.
  *
- *   php tests/run.php            ejecuta todos los tests
- *   php tests/run.php caché      solo los que contengan "caché" en el fichero o la descripción
- *   php tests/run.php --live     incluye LiveTest, que llama a la API real de Spoonacular (consume cuota)
+ *   php tests/run.php                 ejecuta todos los tests
+ *   php tests/run.php FileCacheTest   solo los que contengan "FileCacheTest" en el fichero o la descripción
+ *                                     (texto exacto: distingue mayúsculas)
+ *   php tests/run.php --live          incluye LiveTest, que llama a la API real de Spoonacular (consume cuota)
  *
  * Cada fichero tests/*Test.php registra sus casos con test('descripción', función).
  */

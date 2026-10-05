@@ -4,6 +4,8 @@ Servicio REST en PHP 8.3 (sin frameworks) que busca una receta por nombre en [Sp
 
 ## Puesta en marcha
 
+Todos los comandos `docker compose` de este README se ejecutan desde la raíz del proyecto, donde está `docker-compose.yml`. Desde otra carpeta fallan con `no configuration file provided: not found` (o hay que indicar el fichero con `-f ruta/al/docker-compose.yml`).
+
 ```bash
 cp .env.example .env        # y rellenar SPOONACULAR_API_KEY
 docker compose up -d --build
@@ -22,8 +24,10 @@ Con la API levantada (`docker compose up -d`):
 
 ```bash
 docker compose exec api php tests/run.php            # todos
-docker compose exec api php tests/run.php caché      # solo los que contengan "caché"
+docker compose exec api php tests/run.php FileCacheTest   # solo los tests de ese fichero
 ```
+
+El filtro busca el texto exacto (distingue mayúsculas) en el nombre del fichero y en la descripción del test.
 
 Se ejecutan en el propio contenedor de la API con un runner mínimo (`tests/run.php`), sin PHPUnit ni Composer: el proyecto no tiene ninguna dependencia. Muestra `✔`/`✘` por test y termina con código 1 si alguno falla.
 
