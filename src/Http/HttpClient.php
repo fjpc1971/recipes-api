@@ -26,7 +26,7 @@ class HttpClient
     public function getJson(string $url, array $query = [], array $headers = []): array
     {
         if ($query !== []) {
-            $url .= '?' . http_build_query($query);
+            $url .= '?' . http_build_query($query); // Agregar parámetros de consulta
         }
 
         $headerLines = ['Accept: application/json'];

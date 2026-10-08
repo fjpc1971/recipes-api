@@ -16,10 +16,14 @@ final class Request
     ) {
     }
 
+    /*
+    * Crea un objeto Request a partir de las variables globales de PHP.
+    */
     public static function fromGlobals(): self
     {
         $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
+        // Devuelve un objeto Request con el método HTTP, la ruta y los parámetros de consulta
         return new self(
             strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'),
             rtrim($path, '/') ?: '/',

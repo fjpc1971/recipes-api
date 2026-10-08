@@ -16,23 +16,30 @@ declare(strict_types=1);
 require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/Support.php';
 
-$args = array_slice($argv, 1);
-define('LIVE', in_array('--live', $args, true));
-$filter = implode(' ', array_diff($args, ['--live']));
+// Permite filtrar los tests por nombre de fichero o descripción, y activar LiveTest con --live
+$args = array_slice($argv, 1); // omite el nombre del script
+define('LIVE', in_array('--live', $args, true)); // activa LiveTest si se pasa --live
+$filter = implode(' ', array_diff($args, ['--live'])); // texto a buscar en el nombre del fichero o la descripción del test
 
-final class AssertionFailed extends Exception
+// Para que el runner distinga un test que falla una aserción de un test que revienta por un error inesperado
+final class AssertionFailed extends Exception // Excepción lanzada cuando falla una aserción
 {
 }
 
-/** @var list<array{string, string, callable}> */
+// Variables globales para registrar los tests y el fichero de test actual
 $tests = [];
 $currentFile = '';
 
+/**
+ * Función que registra un test, llamada desde los ficheros de test.
+ * $name es la descripción del test, $fn es la función que lo ejecuta.
+ */
 function test(string $name, callable $fn): void
 {
-    $GLOBALS['tests'][] = [$GLOBALS['currentFile'], $name, $fn];
+    $GLOBALS['tests'][] = [$GLOBALS['currentFile'], $name, $fn]; // añade el test a la lista global
 }
 
+// Aserción de igualdad estricta, con mensaje opcional
 function assertSame(mixed $expected, mixed $actual, string $message = ''): void
 {
     if ($expected !== $actual) {
@@ -41,6 +48,7 @@ function assertSame(mixed $expected, mixed $actual, string $message = ''): void
     }
 }
 
+// Aserción de que una condición es verdadera, con mensaje opcional
 function assertTrue(bool $condition, string $message = 'Se esperaba true'): void
 {
     if (!$condition) {
@@ -48,13 +56,7 @@ function assertTrue(bool $condition, string $message = 'Se esperaba true'): void
     }
 }
 
-/**
- * @template T of Throwable
- *
- * @param class-string<T> $class
- *
- * @return T La excepción lanzada, para poder comprobar sus datos
- */
+// Aserción de que una condición es falsa, con mensaje opcional
 function assertThrows(string $class, callable $fn): Throwable
 {
     try {
@@ -84,33 +86,44 @@ function failureLocation(Throwable $e): string
     return basename($e->getFile()) . ':' . $e->getLine();
 }
 
+##################################################################
+
+// Carga todos los tests de tests/*Test.php
 foreach (glob(__DIR__ . '/*Test.php') ?: [] as $file) {
     $currentFile = basename($file, '.php');
+    /*
+    * Cualquier variable que cree el fichero de test es local a esa llamada y desaparece al terminar. 
+    * Así cada fichero de test queda aislado del runner y del resto de ficheros de test.
+    */
     (static function (string $file): void {
-        require $file;
+        require $file; // registra los tests y llama a su método "test()"
     })($file);
 }
 
-$passed = $failed = 0;
-$lastFile = null;
+$passed = $failed = 0; // Contadores de tests pasados y fallidos
+$lastFile = null; // Para mostrar el nombre del fichero de test solo una vez, antes de sus tests
 
+/*
+    * Ejecuta todos los tests registrados, filtrando por nombre de fichero o descripción si se ha pasado un filtro.
+    * Muestra el resultado de cada test y un resumen final.
+*/
 foreach ($tests as [$file, $name, $fn]) {
     if ($filter !== '' && !str_contains($file . ' ' . $name, $filter)) {
-        continue;
+        continue; // omite los tests que no coinciden con el filtro
     }
 
     if ($file !== $lastFile) {
-        echo "\n" . $file . "\n";
-        $lastFile = $file;
+        echo "\n" . $file . "\n"; // muestra el nombre del fichero de test solo una vez
+        $lastFile = $file; // actualiza el último fichero de test mostrado
     }
 
     try {
-        $fn();
-        $passed++;
-        echo '  ✔ ' . $name . "\n";
+        $fn(); // ejecuta el test
+        $passed++; // incrementa el contador de tests pasados
+        echo '  ✔ ' . $name . "\n"; // muestra el nombre del test pasado
     } catch (Throwable $e) {
         $failed++;
-        $detail = $e instanceof AssertionFailed ? $e->getMessage() : $e::class . ': ' . $e->getMessage();
+        $detail = $e instanceof AssertionFailed ? $e->getMessage() : $e::class . ': ' . $e->getMessage(); // detalle del fallo: aserción fallida o excepción inesperada
         echo '  ✘ ' . $name . ' (' . failureLocation($e) . ")\n";
         echo preg_replace('/^/m', '      ', $detail) . "\n";
     }
@@ -122,4 +135,4 @@ if (!LIVE) {
     echo "(LiveTest omitido: usa --live para probar contra la API real de Spoonacular)\n";
 }
 
-exit($failed === 0 ? 0 : 1);
+exit($failed === 0 ? 0 : 1); // devuelve 0 si todos los tests pasaron, 1 si hubo fallos

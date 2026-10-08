@@ -34,12 +34,12 @@ class SpoonacularClient
      */
     public function getRecipeInformation(int $id): array
     {
-        return $this->request('/recipes/' . $id . '/information', ['includeNutrition' => 'false']);
+        return $this->request('/recipes/' . $id . '/information', ['includeNutrition' => 'false']); //
     }
 
     /**
      * @param array<string, scalar> $query
-     *
+     * 
      * @return array<mixed>
      */
     private function request(string $path, array $query): array

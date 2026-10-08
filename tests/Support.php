@@ -84,6 +84,7 @@ function fakeSpoonacular(): FakeHttpClient
         ->on('/recipes/636360/information', fixture('recipe_information'));
 }
 
+// Crea un RecipeService con un SpoonacularClient que use el FakeHttpClient y un FileCache temporal
 function newService(FakeHttpClient $http, ?string $cacheDir = null): RecipeService
 {
     return new RecipeService(
@@ -94,7 +95,7 @@ function newService(FakeHttpClient $http, ?string $cacheDir = null): RecipeServi
 }
 
 /**
- * @param array<string, string> $query
+ * Hace una petición GET a la API y devuelve la respuesta.
  */
 function apiGet(App $app, string $path, array $query = []): JsonResponse
 {

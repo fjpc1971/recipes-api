@@ -14,7 +14,7 @@ use Throwable;
  */
 final class App
 {
-    private const MAX_NAME_LENGTH = 100;
+    private const MAX_NAME_LENGTH = 100; // Límite de caracteres para el parámetro "name" en la búsqueda de recetas
 
     public function __construct(private readonly RecipeService $recipeService)
     {
@@ -53,9 +53,9 @@ final class App
             }
 
             return $this->searchRecipe($request);
-        } catch (HttpException $e) {
+        } catch (HttpException $e) { //Respuesta de error controlada, con mensaje y código HTTP
             return JsonResponse::error($e->getMessage(), $e->getStatusCode());
-        } catch (Throwable $e) {
+        } catch (Throwable $e) { //Error inesperado: log y respuesta genérica
             error_log((string) $e);
 
             return JsonResponse::error('Error interno del servidor', 500);
@@ -77,8 +77,8 @@ final class App
             throw new HttpException(sprintf('El parámetro "name" no puede superar %d caracteres', self::MAX_NAME_LENGTH), 400);
         }
 
-        [$recipe, $fromCache] = $this->recipeService->findByName($name);
+        [$recipe, $fromCache] = $this->recipeService->findByName($name); // $recipe = array data, y $fromCache = bool indicando si se ha servido desde caché
 
-        return new JsonResponse(['data' => $recipe], 200, ['X-Cache' => $fromCache ? 'HIT' : 'MISS']);
+        return new JsonResponse(['data' => $recipe], 200, ['X-Cache' => $fromCache ? 'HIT' : 'MISS']); //Instancia de JsonResponse con datos, status 200 y cabecera X-Cache indicando si se ha servido desde caché
     }
 }

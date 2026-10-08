@@ -39,6 +39,9 @@ final class JsonResponse
         return $this->headers;
     }
 
+    /**
+     * Envía la respuesta HTTP al cliente.
+     */
     public function send(): void
     {
         http_response_code($this->status);
@@ -48,6 +51,9 @@ final class JsonResponse
             header($name . ': ' . $value);
         }
 
+        // JSON_UNESCAPED_UNICODE para que los caracteres acentuados y especiales se muestren correctamente
+        // JSON_UNESCAPED_SLASHES para que las URLs no se escapen con barras invertidas
+        // JSON_PRETTY_PRINT para que el JSON sea legible (con saltos de línea y sangrías)
         echo json_encode($this->data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 }
